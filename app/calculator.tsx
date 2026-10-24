@@ -38,6 +38,7 @@ export default function Calculator() {
   const [expression, setExpression] = useState("0");
   const [justEvaluated, setJustEvaluated] = useState(false);
   const [angleMode, setAngleMode] = useState<AngleMode>("DEG");
+  const [showScientific, setShowScientific] = useState(false);
 
   const isError = expression === "Error";
   const isPlainNumber = PLAIN_NUMBER.test(expression);
@@ -426,7 +427,58 @@ export default function Calculator() {
         </span>
       </output>
 
-      <div className="mb-2 grid auto-rows-[2.5rem] grid-cols-4 gap-2">
+      <div className="mb-2 flex items-center gap-2">
+        <button
+          type="button"
+          onClick={() => setShowScientific((value) => !value)}
+          aria-expanded={showScientific}
+          aria-controls="scientific-pad"
+          aria-label="Toggle scientific keypad"
+          className="flex flex-1 items-center justify-between rounded-2xl bg-slate-800/40 px-4 py-2 text-sm font-medium text-slate-300 transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
+        >
+          <span className="flex items-center gap-2">
+            <span className="font-mono text-sky-300">fx</span>
+            Scientific
+          </span>
+          <svg
+            aria-hidden="true"
+            viewBox="0 0 24 24"
+            className={`h-4 w-4 transition-transform ${showScientific ? "rotate-180" : ""}`}
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="m6 9 6 6 6-6" />
+          </svg>
+        </button>
+        <div className="flex items-center gap-1 rounded-2xl bg-slate-800/40 p-0.5">
+          {(["DEG", "RAD"] as const).map((mode) => (
+            <button
+              key={mode}
+              type="button"
+              onClick={() => setAngleMode(mode)}
+              aria-pressed={angleMode === mode}
+              aria-label={`${mode === "DEG" ? "Degrees" : "Radians"} angle mode`}
+              className={`rounded-xl px-2.5 py-1.5 text-[11px] font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 ${
+                angleMode === mode
+                  ? "bg-sky-500/25 text-sky-300"
+                  : "text-slate-400 hover:text-slate-200"
+              }`}
+            >
+              {mode}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div
+        id="scientific-pad"
+        className={`mb-2 auto-rows-[2.5rem] grid-cols-5 gap-2 ${
+          showScientific ? "grid" : "hidden"
+        }`}
+      >
         {scientificKeys.map((key) => (
           <button
             key={key.label}
@@ -438,24 +490,6 @@ export default function Calculator() {
             {key.label}
           </button>
         ))}
-        <div className="flex items-center gap-1 rounded-2xl bg-slate-800/40 p-1">
-          {(["DEG", "RAD"] as const).map((mode) => (
-            <button
-              key={mode}
-              type="button"
-              onClick={() => setAngleMode(mode)}
-              aria-pressed={angleMode === mode}
-              aria-label={`${mode === "DEG" ? "Degrees" : "Radians"} angle mode`}
-              className={`flex-1 rounded-xl py-1 text-[11px] font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 ${
-                angleMode === mode
-                  ? "bg-sky-500/25 text-sky-300"
-                  : "text-slate-400 hover:text-slate-200"
-              }`}
-            >
-              {mode}
-            </button>
-          ))}
-        </div>
       </div>
 
       <div className="grid auto-rows-[3.25rem] grid-cols-4 gap-2">
