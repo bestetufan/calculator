@@ -166,8 +166,15 @@ function applyFunction(name: FunctionName, value: number, angleMode: AngleMode):
       return cleanTrig(Math.sin(toRadians(value, angleMode)));
     case "cos":
       return cleanTrig(Math.cos(toRadians(value, angleMode)));
-    case "tan":
-      return cleanTrig(Math.tan(toRadians(value, angleMode)));
+    case "tan": {
+      const radians = toRadians(value, angleMode);
+
+      if (Math.abs(Math.cos(radians)) < 1e-12) {
+        return Number.NaN;
+      }
+
+      return cleanTrig(Math.tan(radians));
+    }
   }
 }
 

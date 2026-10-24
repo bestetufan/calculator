@@ -343,10 +343,6 @@ export default function Calculator() {
     setJustEvaluated(false);
   }
 
-  function toggleAngleMode() {
-    setAngleMode(angleMode === "DEG" ? "RAD" : "DEG");
-  }
-
   function equals() {
     if (isError || isPlainNumber) {
       return;
@@ -399,18 +395,21 @@ export default function Calculator() {
     { label: "ln", ariaLabel: "Natural logarithm", action: () => insertFunction("ln") },
     { label: "%", ariaLabel: "Percent", action: applyPercent },
     { label: "±", ariaLabel: "Toggle sign", action: toggleSign },
-    {
-      label: angleMode,
-      ariaLabel: `Switch to ${angleMode === "DEG" ? "radians" : "degrees"}`,
-      action: toggleAngleMode,
-    },
   ];
 
   return (
     <div className="w-full max-w-sm rounded-3xl border border-white/10 bg-slate-900/80 p-4 shadow-2xl shadow-black/50 backdrop-blur">
-      <h1 className="mb-3 px-2 text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
-        Scientific calculator
-      </h1>
+      <div className="mb-3 flex items-center justify-between px-2">
+        <h1 className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
+          Scientific calculator
+        </h1>
+        <span
+          aria-live="polite"
+          className="rounded-full bg-sky-400/10 px-2 py-0.5 text-[10px] font-semibold tracking-[0.2em] text-sky-300 ring-1 ring-inset ring-sky-400/20"
+        >
+          {angleMode}
+        </span>
+      </div>
 
       <output
         aria-live="polite"
@@ -439,6 +438,24 @@ export default function Calculator() {
             {key.label}
           </button>
         ))}
+        <div className="flex items-center gap-1 rounded-2xl bg-slate-800/40 p-1">
+          {(["DEG", "RAD"] as const).map((mode) => (
+            <button
+              key={mode}
+              type="button"
+              onClick={() => setAngleMode(mode)}
+              aria-pressed={angleMode === mode}
+              aria-label={`${mode === "DEG" ? "Degrees" : "Radians"} angle mode`}
+              className={`flex-1 rounded-xl py-1 text-[11px] font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 ${
+                angleMode === mode
+                  ? "bg-sky-500/25 text-sky-300"
+                  : "text-slate-400 hover:text-slate-200"
+              }`}
+            >
+              {mode}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="grid auto-rows-[3.25rem] grid-cols-4 gap-2">
